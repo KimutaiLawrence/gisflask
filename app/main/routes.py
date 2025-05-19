@@ -142,11 +142,12 @@ def map_preferences():
         
         if not map_pref:
             # Create a new map preference for the user
-            map_pref = MapPreference(user_id=current_user_id, 
-                                     map_type='folium',
-                                     center_lat=0.0,
-                                     center_lng=0.0,
-                                     zoom_level=2)
+            map_pref = MapPreference()
+            map_pref.user_id = current_user_id
+            map_pref.map_type = 'folium'
+            map_pref.center_lat = 0.0
+            map_pref.center_lng = 0.0
+            map_pref.zoom_level = 2
             db.session.add(map_pref)
         
         # Update preferences
