@@ -18,6 +18,19 @@ def index():
     """
     return render_template('index.html')
 
+@main_bp.route('/vue/dashboard')
+def vue_dashboard():
+    """
+    Vue Dashboard Example
+    ---
+    tags:
+      - Main
+    responses:
+      200:
+        description: Vue dashboard page rendered
+    """
+    return render_template('vue_dashboard.html')
+
 @main_bp.route('/map')
 def map_page():
     """

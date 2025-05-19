@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block title %}Register - Vue Example{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header bg-dark text-white">
+          <h3 class="mb-0">Register - Vue Example</h3>
+        </div>
+        <div class="card-body">
+          <div id="register-app">
+            <div v-if="successMessage" class="alert alert-success">
+              {% raw %}{{ successMessage }}{% endraw %}
+            </div>
+            <div v-if="errorMessage" class="alert alert-danger">
+              {% raw %}{{ errorMessage }}{% endraw %}
+            </div>
+            <form @submit.prevent="registerUser">
+              <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="username"
+                  v-model="formData.username"
+                  :class="{'is-invalid': validationErrors.username}"
+                  required
+                >
+                <div v-if="validationErrors.username" class="invalid-feedback">
+                  {% raw %}{{ validationErrors.username }}{% endraw %}
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input
+                  type="email"
+                  class="form-control"
+                  id="email"
+                  v-model="formData.email"
+                  :class="{'is-invalid': validationErrors.email}"
+                  required
+                >
+                <div v-if="validationErrors.email" class="invalid-feedback">
+                  {% raw %}{{ validationErrors.email }}{% endraw %}
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input
+                  type="password"
+                  class="form-control"
+                  id="password"
+                  v-model="formData.password"
+                  :class="{'is-invalid': validationErrors.password}"
+                  required
+                >
+                <div v-if="validationErrors.password" class="invalid-feedback">
+                  {% raw %}{{ validationErrors.password }}{% endraw %}
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="password_confirm" class="form-label">Confirm Password</label>
+                <input
+                  type="password"
+                  class="form-control"
+                  id="password_confirm" 
+                  v-model="formData.password_confirm"
+                  :class="{'is-invalid': passwordsMatch === false}"
+                  required
+                >
+                <div v-if="passwordsMatch === false" class="invalid-feedback">
+                  Passwords do not match
+                </div>
+              </div>
+              <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary" :disabled="isSubmitting">
+                  <span v-if="isSubmitting" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                  Register
+                </button>
+                <a href="/auth/login" class="btn btn-outline-secondary">Already have an account? Log in</a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+  const registerApp = new Vue({
+    el: '#register-app',
+    data: {
+      formData: {
+        username: '',
+        email: '',
+        password: '',
+        password_confirm: ''
+      },
+      validationErrors: {},
+      successMessage: '',
+      errorMessage: '',
+      isSubmitting: false
+    },
+    computed: {
+      passwordsMatch() {
+        if (!this.formData.password_confirm) return null;
+        return this.formData.password === this.formData.password_confirm;
+      }
+    },
+    methods: {
+      registerUser() {
+        // Reset messages and validation
+        this.validationErrors = {};
+        this.successMessage = '';
+        this.errorMessage = '';
+        
+        // Check if passwords match
+        if (this.formData.password !== this.formData.password_confirm) {
+          this.validationErrors.password_confirm = 'Passwords do not match';
+          return;
+        }
+        
+        // Set loading state
+        this.isSubmitting = true;
+        
+        // Prepare data for API
+        const apiData = {
+          username: this.formData.username,
+          email: this.formData.email,
+          password: this.formData.password
+        };
+        
+        // Call registration API
+        axios.post('/auth/register', apiData)
+          .then(response => {
+            this.successMessage = 'Registration successful! You can now log in.';
+            // Reset form
+            this.formData = {
+              username: '',
+              email: '',
+              password: '',
+              password_confirm: ''
+            };
+          })
+          .catch(error => {
+            if (error.response && error.response.data) {
+              if (error.response.data.errors) {
+                this.validationErrors = error.response.data.errors;
+              } else {
+                this.errorMessage = error.response.data.message || 'Registration failed. Please try again.';
+              }
+            } else {
+              this.errorMessage = 'Network error. Please check your connection and try again.';
+            }
+          })
+          .finally(() => {
+            this.isSubmitting = false;
+          });
+      }
+    }
+  });
+</script>
+{% endblock %}

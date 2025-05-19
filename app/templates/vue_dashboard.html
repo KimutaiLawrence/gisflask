@@ -1,0 +1,245 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Vue Example{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div id="vue-dashboard">
+    <div class="row">
+      <div class="col-lg-12 mb-4">
+        <div class="card">
+          <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+            <h3 class="mb-0">GIS Dashboard</h3>
+            <button @click="logout" class="btn btn-outline-light btn-sm">Logout</button>
+          </div>
+          <div class="card-body">
+            <div v-if="!isAuthenticated" class="alert alert-warning">
+              <p>You are not logged in. Please <a href="/auth/vue/login">login</a> to see your dashboard.</p>
+            </div>
+            
+            <div v-if="isAuthenticated">
+              <div v-if="loading" class="text-center my-5">
+                <div class="spinner-border" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              </div>
+              
+              <div v-else>
+                <div class="alert alert-success">
+                  <h4>Welcome, {% raw %}{{ userData.username }}{% endraw %}!</h4>
+                  <p>This is an example of how to integrate Vue.js with the Flask GIS backend.</p>
+                </div>
+                
+                <div class="row mt-4">
+                  <div class="col-md-6">
+                    <div class="card mb-4">
+                      <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0">User Information</h5>
+                      </div>
+                      <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                          <li class="list-group-item d-flex justify-content-between">
+                            <span>Username:</span>
+                            <span class="badge bg-primary">{% raw %}{{ userData.username }}{% endraw %}</span>
+                          </li>
+                          <li class="list-group-item d-flex justify-content-between">
+                            <span>Email:</span>
+                            <span>{% raw %}{{ userData.email }}{% endraw %}</span>
+                          </li>
+                          <li class="list-group-item d-flex justify-content-between">
+                            <span>Member since:</span>
+                            <span>{% raw %}{{ formatDate(userData.registered_on) }}{% endraw %}</span>
+                          </li>
+                          <li class="list-group-item d-flex justify-content-between">
+                            <span>Roles:</span>
+                            <div>
+                              <span v-for="role in userData.roles" :key="role.id" class="badge bg-success me-1">
+                                {% raw %}{{ role.name }}{% endraw %}
+                              </span>
+                            </div>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-6">
+                    <div class="card mb-4">
+                      <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0">Map Preferences</h5>
+                      </div>
+                      <div class="card-body">
+                        <form @submit.prevent="saveMapPreferences">
+                          <div class="mb-3">
+                            <label for="mapType" class="form-label">Map Type</label>
+                            <select class="form-select" id="mapType" v-model="mapPreferences.map_type">
+                              <option value="folium">Folium</option>
+                            </select>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-6">
+                              <div class="mb-3">
+                                <label for="centerLat" class="form-label">Center Latitude</label>
+                                <input type="number" class="form-control" id="centerLat" 
+                                       v-model="mapPreferences.center_lat" step="0.000001">
+                              </div>
+                            </div>
+                            <div class="col-md-6">
+                              <div class="mb-3">
+                                <label for="centerLng" class="form-label">Center Longitude</label>
+                                <input type="number" class="form-control" id="centerLng" 
+                                       v-model="mapPreferences.center_lng" step="0.000001">
+                              </div>
+                            </div>
+                          </div>
+                          <div class="mb-3">
+                            <label for="zoomLevel" class="form-label">Zoom Level</label>
+                            <input type="range" class="form-range" id="zoomLevel" 
+                                   v-model.number="mapPreferences.zoom_level" min="1" max="18">
+                            <div class="text-center">{% raw %}{{ mapPreferences.zoom_level }}{% endraw %}</div>
+                          </div>
+                          <div class="d-grid">
+                            <button type="submit" class="btn btn-primary" :disabled="savingPreferences">
+                              <span v-if="savingPreferences" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                              Save Preferences
+                            </button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="row mt-2">
+                  <div class="col-12">
+                    <div class="d-grid gap-2">
+                      <a :href="mapUrl" class="btn btn-success" target="_blank">
+                        Open Map with Current Preferences
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+  const dashboard = new Vue({
+    el: '#vue-dashboard',
+    data: {
+      isAuthenticated: false,
+      loading: true,
+      userData: null,
+      mapPreferences: {
+        map_type: 'folium',
+        center_lat: 0,
+        center_lng: 0,
+        zoom_level: 2
+      },
+      savingPreferences: false,
+      errorMessage: '',
+    },
+    computed: {
+      mapUrl() {
+        return `/map?lat=${this.mapPreferences.center_lat}&lng=${this.mapPreferences.center_lng}&zoom=${this.mapPreferences.zoom_level}`;
+      },
+      authHeaders() {
+        const token = localStorage.getItem('accessToken');
+        return {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        };
+      }
+    },
+    methods: {
+      formatDate(dateString) {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        return date.toLocaleDateString();
+      },
+      checkAuthentication() {
+        const token = localStorage.getItem('accessToken');
+        this.isAuthenticated = !!token;
+        
+        if (this.isAuthenticated) {
+          this.fetchUserData();
+          this.fetchMapPreferences();
+        } else {
+          this.loading = false;
+        }
+      },
+      fetchUserData() {
+        axios.get('/auth/protected', { headers: this.authHeaders })
+          .then(response => {
+            // In a real app, you'd have an endpoint that returns more user data
+            // For now, we'll use a hardcoded example
+            this.userData = {
+              username: response.data.logged_in_as,
+              email: 'user@example.com', // This would come from a real endpoint
+              registered_on: new Date().toISOString(),
+              roles: [{ id: 1, name: 'user' }]
+            };
+          })
+          .catch(error => {
+            console.error('Error fetching user data:', error);
+            if (error.response && error.response.status === 401) {
+              // Token expired or invalid
+              this.logout();
+            }
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+      },
+      fetchMapPreferences() {
+        axios.get('/map/preferences', { headers: this.authHeaders })
+          .then(response => {
+            if (response.data) {
+              this.mapPreferences = response.data;
+            }
+          })
+          .catch(error => {
+            console.error('Error fetching map preferences:', error);
+            // If we fail, we'll just use the defaults
+          });
+      },
+      saveMapPreferences() {
+        this.savingPreferences = true;
+        
+        axios.post('/map/preferences', this.mapPreferences, { headers: this.authHeaders })
+          .then(response => {
+            alert('Map preferences saved successfully!');
+          })
+          .catch(error => {
+            console.error('Error saving map preferences:', error);
+            alert('Failed to save map preferences. Please try again.');
+          })
+          .finally(() => {
+            this.savingPreferences = false;
+          });
+      },
+      logout() {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        this.isAuthenticated = false;
+        this.userData = null;
+        
+        // Redirect to login page
+        window.location.href = '/auth/vue/login';
+      }
+    },
+    mounted() {
+      this.checkAuthentication();
+    }
+  });
+</script>
+{% endblock %}
