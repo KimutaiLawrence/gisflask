@@ -233,28 +233,4 @@ def protected():
         
     return jsonify({'logged_in_as': user.username}), 200
 
-@auth_bp.route('/vue/register', methods=['GET'])
-def vue_register():
-    """
-    Vue.js Example Registration Page
-    ---
-    tags:
-      - Authentication
-    responses:
-      200:
-        description: Vue.js register page rendered
-    """
-    return render_template('vue_register.html')
 
-@auth_bp.route('/vue/login', methods=['GET'])
-def vue_login():
-    """
-    Vue.js Example Login Page
-    ---
-    tags:
-      - Authentication
-    responses:
-      200:
-        description: Vue.js login page rendered
-    """
-    return render_template('vue_login.html')
