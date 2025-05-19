@@ -168,7 +168,27 @@ Interactive maps using Folium:
 
 ### API Documentation
 
-Swagger/OpenAPI documentation available at `/docs/`.
+Swagger/OpenAPI documentation is available at `/docs/`.
+
+#### Functional Endpoints
+
+These endpoints are fully implemented and can be tested immediately from a frontend application:
+
+- **Authentication**: `/auth/register`, `/auth/login`, `/auth/refresh`, `/auth/protected`
+- **Map Services**: `/map`, `/api/map/preferences`
+- **Health Check**: `/health`
+
+#### Placeholder Endpoints
+
+The following modules contain placeholder endpoints that need to be uncommented in their respective route files to work:
+
+- **Users Module**: All endpoints under `/users/*`
+- **Products Module**: All endpoints under `/products/*`
+
+To activate these endpoints:
+1. Open the corresponding route files (`app/users/routes.py`, `app/products/routes.py`)
+2. Uncomment the example code sections
+3. Implement any additional functionality you need
 
 ### Extending the Application
 
