@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}GIS Flask - Interactive Map{% endblock %}
+
+{% block extra_css %}
+<style>
+    .map-container {
+        height: 600px;
+        width: 100%;
+        border-radius: 5px;
+        border: 1px solid #444;
+    }
+    
+    .map-controls {
+        margin-bottom: 20px;
+    }
+    
+    .map-type-selector {
+        margin-bottom: 15px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1>Interactive Map</h1>
+        <p class="lead">Explore geographical data with interactive maps.</p>
+        
+        <div class="map-controls">
+            <div class="map-type-selector">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="mapType" id="foliumMap" value="folium" checked>
+                    <label class="form-check-label" for="foliumMap">Folium Map</label>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="lat">Latitude</label>
+                        <input type="number" class="form-control" id="lat" value="{{ center_lat }}" step="0.1">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="lng">Longitude</label>
+                        <input type="number" class="form-control" id="lng" value="{{ center_lng }}" step="0.1">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="zoom">Zoom Level</label>
+                        <input type="number" class="form-control" id="zoom" value="{{ zoom_level }}" min="1" max="18">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <button class="btn btn-primary form-control" id="updateMap">Update Map</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="map-container">
+            {{ map_html|safe }}
+        </div>
+        
+        <div class="mt-4">
+            <h3>Map Features</h3>
+            <ul>
+                <li><strong>Pan and Zoom</strong>: Click and drag to pan, use the mouse wheel to zoom.</li>
+                <li><strong>Layer Control</strong>: Toggle between different map layers (if available).</li>
+                <li><strong>Map Preferences</strong>: Save your map preferences when logged in.</li>
+                <li><strong>Interactive Features</strong>: Explore with interactive Folium map visualization.</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get elements
+        const mapTypeInputs = document.querySelectorAll('input[name="mapType"]');
+        const latInput = document.getElementById('lat');
+        const lngInput = document.getElementById('lng');
+        const zoomInput = document.getElementById('zoom');
+        const updateMapBtn = document.getElementById('updateMap');
+        
+        // Handle map update
+        updateMapBtn.addEventListener('click', function() {
+            let mapType = 'folium';
+            
+            // Get selected map type
+            for (const input of mapTypeInputs) {
+                if (input.checked) {
+                    mapType = input.value;
+                    break;
+                }
+            }
+            
+            // Get coordinates and zoom level
+            const lat = parseFloat(latInput.value) || 0;
+            const lng = parseFloat(lngInput.value) || 0;
+            const zoom = parseInt(zoomInput.value) || 2;
+            
+            // Build URL with parameters
+            const url = `/map?map_type=${mapType}&lat=${lat}&lng=${lng}&zoom=${zoom}`;
+            
+            // Navigate to new URL
+            window.location.href = url;
+        });
+        
+        // Save map preferences if user is logged in
+        function saveMapPreferences() {
+            const token = getToken();
+            
+            if (!token) {
+                console.log('User not logged in, skipping preference save');
+                return;
+            }
+            
+            let mapType = 'folium';
+            for (const input of mapTypeInputs) {
+                if (input.checked) {
+                    mapType = input.value;
+                    break;
+                }
+            }
+            
+            const lat = parseFloat(latInput.value) || 0;
+            const lng = parseFloat(lngInput.value) || 0;
+            const zoom = parseInt(zoomInput.value) || 2;
+            
+            // Make API request to save preferences
+            fetch('/api/map/preferences', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    map_type: mapType,
+                    center_lat: lat,
+                    center_lng: lng,
+                    zoom_level: zoom
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Map preferences saved successfully');
+                } else {
+                    console.error('Failed to save map preferences');
+                }
+            })
+            .catch(error => {
+                console.error('Error saving map preferences:', error);
+            });
+        }
+        
+        // Add event listener to save button
+        updateMapBtn.addEventListener('click', saveMapPreferences);
+    });
+</script>
+{% endblock %}

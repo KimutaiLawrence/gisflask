@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}GIS Flask - Home{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="jumbotron bg-dark p-5 mb-4 rounded">
+            <h1 class="display-4">Welcome to GIS Flask</h1>
+            <p class="lead">A Flask-based GIS backend package with JWT authentication, role-based permissions, interactive maps, health monitoring, and API documentation.</p>
+            <hr class="my-4">
+            <p>Explore the interactive maps using Folium or Leafmap.</p>
+            <a class="btn btn-primary btn-lg" href="{{ url_for('main.map_page') }}" role="button">Go to Maps</a>
+            <a class="btn btn-secondary btn-lg" href="/docs/" role="button">API Documentation</a>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card bg-dark mb-4">
+            <div class="card-body">
+                <h5 class="card-title">JWT Authentication</h5>
+                <p class="card-text">Secure authentication using JSON Web Tokens (JWT) for API access control.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-dark mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Interactive Maps</h5>
+                <p class="card-text">Choose between Folium and Leafmap for interactive map visualizations.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-dark mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Role-Based Access Control</h5>
+                <p class="card-text">Comprehensive permissions system for secure user access management.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-2">
+    <div class="col-md-6">
+        <div class="card bg-dark mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Getting Started</h5>
+                <p class="card-text">To get started with the API, create an account and obtain your authentication token.</p>
+                <a href="{{ url_for('auth.register') }}" class="btn btn-primary">Register</a>
+                <a href="{{ url_for('auth.login') }}" class="btn btn-secondary">Login</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card bg-dark mb-4">
+            <div class="card-body">
+                <h5 class="card-title">API Documentation</h5>
+                <p class="card-text">Explore the API documentation to learn about available endpoints and how to use them.</p>
+                <a href="/docs/" class="btn btn-primary">View API Docs</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
