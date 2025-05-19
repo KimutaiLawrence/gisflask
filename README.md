@@ -22,7 +22,42 @@ A Flask-based GIS backend package with JWT authentication, role-based permission
 - PostgreSQL database
 - Required Python packages (see installation)
 
-### Installation
+### Installation Options
+
+#### Option 1: Install as a Python Package
+
+1. Install directly from GitHub (or PyPI once published):
+   ```bash
+   pip install git+https://github.com/yourusername/gisflask.git
+   ```
+
+2. Set up environment variables:
+   ```bash
+   # Database connection
+   export DATABASE_URL=postgresql://username:password@localhost:5432/gisflask
+   
+   # JWT secret
+   export JWT_SECRET_KEY=your-secret-key
+   
+   # Session secret
+   export SESSION_SECRET=your-session-secret
+   ```
+
+3. Initialize the database and create admin user:
+   ```bash
+   # Initialize the database with default roles and permissions
+   gisflask init-db
+   
+   # Create an admin user (defaults to admin/admin123 if not specified)
+   gisflask create-admin --username admin --email admin@example.com --password admin123
+   ```
+
+4. Run the application:
+   ```bash
+   gisflask run
+   ```
+
+#### Option 2: Clone and Run Directly
 
 1. Clone the repository:
    ```bash
@@ -36,9 +71,9 @@ A Flask-based GIS backend package with JWT authentication, role-based permission
    source venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
 
-3. Install dependencies:
+3. Install in development mode:
    ```bash
-   pip install -r requirements.txt
+   pip install -e .
    ```
 
 4. Set up environment variables:
@@ -55,14 +90,21 @@ A Flask-based GIS backend package with JWT authentication, role-based permission
 
 5. Initialize the database:
    ```bash
+   # Using Flask-Migrate
    flask db init
    flask db migrate -m "Initial migration"
    flask db upgrade
+   
+   # OR using CLI commands
+   gisflask init-db
+   gisflask create-admin
    ```
 
 6. Run the application:
    ```bash
    python run.py
+   # OR
+   gisflask run --debug
    ```
 
 The application will be available at `http://localhost:5000`.
@@ -140,6 +182,103 @@ Each module includes placeholder templates and commented example code to help yo
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Creating Your Own Package
+
+This project is designed to be used as a template for your own GIS-enabled backend. Here's how to create your own package based on this template:
+
+1. **Fork or clone this repository**
+   ```bash
+   git clone <repository-url> your-project-name
+   cd your-project-name
+   ```
+
+2. **Customize the package details**
+   
+   Edit the `setup.py` file to change:
+   - package name
+   - version
+   - author information
+   - description
+   - repository URL
+   - other metadata
+
+3. **Customize the application**
+   
+   - Add your own models to `app/models.py`
+   - Create new blueprint modules for your features
+   - Customize templates and views
+   - Add additional services as needed
+
+4. **Build and publish your package**
+   ```bash
+   # Build the package
+   python -m build
+   
+   # Install locally for testing
+   pip install -e .
+   
+   # Publish to PyPI (once ready)
+   python -m twine upload dist/*
+   ```
+
+## Customization Guide
+
+### Adding New Models
+
+1. Edit `app/models.py` to add your new model class:
+   ```python
+   class YourModel(db.Model):
+       __tablename__ = "your_models"
+       
+       id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+       name = db.Column(db.String(100), nullable=False)
+       # Add more fields as needed
+   ```
+
+2. Create migrations:
+   ```bash
+   flask db migrate -m "Add YourModel"
+   flask db upgrade
+   ```
+
+### Creating a New Module
+
+1. Create a new directory structure:
+   ```bash
+   mkdir -p app/your_module
+   touch app/your_module/__init__.py
+   touch app/your_module/routes.py
+   ```
+
+2. Define your blueprint in `__init__.py`:
+   ```python
+   from flask import Blueprint
+   your_module_bp = Blueprint('your_module', __name__, url_prefix='/your-module')
+   from app.your_module import routes
+   ```
+
+3. Register the blueprint in `app/__init__.py`:
+   ```python
+   from app.your_module import your_module_bp
+   app.register_blueprint(your_module_bp)
+   ```
+
+4. Create templates for your module:
+   ```bash
+   mkdir -p app/templates/your_module
+   ```
+
+5. Implement your routes and views in `routes.py`
+
+## Deployment
+
+For production deployment, consider:
+
+1. Using a proper WSGI server like Gunicorn or uWSGI
+2. Setting up a reverse proxy with Nginx
+3. Configuring proper environment variables for production
+4. Setting up database backups and monitoring
 
 ## Acknowledgments
 
