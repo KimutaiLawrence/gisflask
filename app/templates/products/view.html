@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}Product Details{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <div class="card">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Product Details</h5>
+          <a href="{{ url_for('products.index') }}" class="btn btn-outline-light btn-sm">
+            <i class="fas fa-arrow-left"></i> Back to List
+          </a>
+        </div>
+        <div class="card-body">
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                  {{ message }}
+                </div>
+              {% endfor %}
+            {% endif %}
+          {% endwith %}
+          
+          <!-- This is a placeholder. Uncomment and modify the code below to implement product details view -->
+          
+          <!--
+          <div class="row mb-4">
+            <div class="col-md-4">
+              <div class="text-center mb-3">
+                <div class="product-image-placeholder bg-light rounded d-flex align-items-center justify-content-center mx-auto" style="width: 150px; height: 150px;">
+                  <i class="fas fa-box fa-3x text-secondary"></i>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-8">
+              <h3>{{ product.name }}</h3>
+              <h5 class="text-primary">${{ "%.2f"|format(product.price) }}</h5>
+              <p class="text-muted">SKU: {{ product.sku }}</p>
+              {% if product.category %}
+                <p><strong>Category:</strong> {{ product.category }}</p>
+              {% endif %}
+              <p>
+                <strong>Inventory:</strong> 
+                {% if product.inventory > 0 %}
+                  <span class="badge bg-success">In Stock ({{ product.inventory }})</span>
+                {% else %}
+                  <span class="badge bg-danger">Out of Stock</span>
+                {% endif %}
+              </p>
+            </div>
+          </div>
+          
+          <div class="mb-4">
+            <h5>Description</h5>
+            <p>{{ product.description or 'No description available.' }}</p>
+          </div>
+          
+          <div class="mb-4">
+            <h5>Product Details</h5>
+            <ul class="list-group">
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>Created Date</span>
+                <span>{{ product.created_at.strftime('%Y-%m-%d') }}</span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>Last Updated</span>
+                <span>{{ product.updated_at.strftime('%Y-%m-%d') }}</span>
+              </li>
+            </ul>
+          </div>
+          
+          <div class="d-flex justify-content-between mt-4">
+            <a href="{{ url_for('products.edit', product_id=product.id) }}" class="btn btn-warning">
+              <i class="fas fa-edit"></i> Edit Product
+            </a>
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+              <i class="fas fa-trash"></i> Delete Product
+            </button>
+          </div>
+          
+          <!-- Delete Confirmation Modal -->
+          <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  Are you sure you want to delete product <strong>{{ product.name }}</strong>?
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                  <form action="{{ url_for('products.delete', product_id=product.id) }}" method="post">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+          -->
+          
+          <!-- Placeholder content -->
+          <div class="text-center py-5">
+            <h4>Product Details View</h4>
+            <p class="text-muted">This is a placeholder for the Product Details view.</p>
+            <p>Product ID: <code>{{ product_id }}</code></p>
+            <p>To implement this feature:</p>
+            <ol class="text-start mx-auto" style="max-width: 500px;">
+              <li>Create a Product model in <code>app/models.py</code></li>
+              <li>Uncomment and customize the code in this template</li>
+              <li>Implement the view logic in <code>app/products/routes.py</code></li>
+            </ol>
+            <div class="mt-4">
+              <a href="{{ url_for('products.edit', product_id=product_id) }}" class="btn btn-warning me-2">Edit Product Example</a>
+              <a href="{{ url_for('products.index') }}" class="btn btn-secondary">Back to Products List</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

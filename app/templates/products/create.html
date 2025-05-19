@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Create Product{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <div class="card">
+        <div class="card-header bg-dark text-white">
+          <h5 class="mb-0">Create New Product</h5>
+        </div>
+        <div class="card-body">
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                  {{ message }}
+                </div>
+              {% endfor %}
+            {% endif %}
+          {% endwith %}
+          
+          <!-- This is a placeholder. Uncomment and modify the code below to implement product creation functionality -->
+          
+          <!--
+          <form method="post" action="{{ url_for('products.create') }}">
+            <div class="mb-3">
+              <label for="name" class="form-label">Product Name</label>
+              <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+            <div class="mb-3">
+              <label for="sku" class="form-label">SKU</label>
+              <input type="text" class="form-control" id="sku" name="sku" required>
+              <div class="form-text">Unique identifier for this product.</div>
+            </div>
+            <div class="mb-3">
+              <label for="price" class="form-label">Price</label>
+              <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input type="number" step="0.01" min="0" class="form-control" id="price" name="price" required>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="description" class="form-label">Description</label>
+              <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="category" class="form-label">Category</label>
+              <select class="form-select" id="category" name="category">
+                <option value="">Select a category</option>
+                <option value="electronics">Electronics</option>
+                <option value="clothing">Clothing</option>
+                <option value="food">Food & Beverages</option>
+                <option value="home">Home & Garden</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="inventory" class="form-label">Inventory Count</label>
+              <input type="number" class="form-control" id="inventory" name="inventory" min="0" value="0">
+            </div>
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary">Create Product</button>
+              <a href="{{ url_for('products.index') }}" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+          </form>
+          -->
+          
+          <!-- Placeholder content -->
+          <div class="text-center py-5">
+            <h4>Create Product Form</h4>
+            <p class="text-muted">This is a placeholder for the Create Product form.</p>
+            <p>To implement this feature:</p>
+            <ol class="text-start mx-auto" style="max-width: 500px;">
+              <li>Create a Product model in <code>app/models.py</code></li>
+              <li>Uncomment and customize the form in this template</li>
+              <li>Implement the create logic in <code>app/products/routes.py</code></li>
+            </ol>
+            <div class="mt-4">
+              <a href="{{ url_for('products.index') }}" class="btn btn-secondary">Back to Products List</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
