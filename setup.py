@@ -6,12 +6,12 @@ with open("README.md", "r", encoding="utf-8") as fh:
 setup(
     name="gisflask",
     version="0.1.0",
-    author="GIS Flask Team",
-    author_email="example@example.com",
+    author="Lawrence Kimutai",
+    author_email="lawrencekimutai001@gmail.com",
     description="A Flask-based GIS backend package with JWT authentication, role-based permissions, interactive maps, and API documentation",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/gisflask",
+    url="https://github.com/KimutaiLawrence/gisflask",
     packages=find_packages(),
     include_package_data=True,
     classifiers=[

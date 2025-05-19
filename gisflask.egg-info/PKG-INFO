@@ -1,8 +1,44 @@
+Metadata-Version: 2.4
+Name: gisflask
+Version: 0.1.0
+Summary: A Flask-based GIS backend package with JWT authentication, role-based permissions, interactive maps, and API documentation
+Home-page: https://github.com/KimutaiLawrence/gisflask
+Author: Lawrence Kimutai
+Author-email: lawrencekimutai001@gmail.com
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Framework :: Flask
+Classifier: Topic :: Scientific/Engineering :: GIS
+Requires-Python: >=3.7
+Description-Content-Type: text/markdown
+Requires-Dist: flasgger>=0.9.7
+Requires-Dist: Flask>=2.3.3
+Requires-Dist: Flask-Bcrypt>=1.0.1
+Requires-Dist: Flask-Cors>=4.0.0
+Requires-Dist: Flask-JWT-Extended>=4.5.3
+Requires-Dist: Flask-Migrate>=4.0.5
+Requires-Dist: Flask-SQLAlchemy>=3.1.1
+Requires-Dist: folium>=0.14.0
+Requires-Dist: gunicorn>=21.2.0
+Requires-Dist: marshmallow>=3.20.1
+Requires-Dist: psycopg2-binary>=2.9.9
+Requires-Dist: SQLAlchemy>=2.0.23
+Requires-Dist: Werkzeug>=2.3.7
+Requires-Dist: email-validator>=2.1.0
+Dynamic: author
+Dynamic: author-email
+Dynamic: classifier
+Dynamic: description
+Dynamic: description-content-type
+Dynamic: home-page
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary
+
 # GIS Flask
 
 A Flask-based GIS backend package with JWT authentication, role-based permissions, interactive maps, health monitoring, and API documentation.
-
-![API Documentation](app/auth/APIDOCS.png)
 
 ## Features
 
@@ -61,8 +97,8 @@ A Flask-based GIS backend package with JWT authentication, role-based permission
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/KimutaiLawrence/gisflask.git
-   cd gisflask
+   git clone https://github.com/KimutaiLawrence/gisflask.git your-project-name
+   cd your-project-name
    ```
 
 2. Create a virtual environment:
@@ -71,12 +107,8 @@ A Flask-based GIS backend package with JWT authentication, role-based permission
    venv\Scripts\activate  # On Windows: or other: source venv/bin/activate
    ```
 
-3. Install dependencies (choose one method):
+3. Install in development mode:
    ```bash
-   # Method 1: Install using requirements.txt
-   pip install -r requirements.txt
-
-   # Method 2: Install in development mode (recommended for development)
    pip install -e .
    ```
 
@@ -173,14 +205,6 @@ Interactive maps using Folium:
 ### API Documentation
 
 Swagger/OpenAPI documentation is available at `/docs/`.
-
-![API Documentation](app/auth/APIDOCS.png)
-
-The API documentation provides:
-- Interactive testing of all endpoints
-- Detailed request/response schemas
-- Authentication requirements
-- Example requests and responses
 
 #### Functional Endpoints
 
