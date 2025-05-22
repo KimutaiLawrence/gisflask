@@ -1,0 +1,40 @@
+name: python-package
+
+on:
+  push:
+    branches:
+      - main
+  release:
+    types: [created]
+
+permissions:
+  id-token: write  # Required for PyPI publishing
+  contents: read   # Required for checking out code
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write  # Required for PyPI publishing
+      contents: read   # Required for checking out code
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11"]  # Use string format for version numbers
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install build
+    - name: Build package
+      run: python -m build
+    - name: Publish package
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        verbose: true  # Add verbose output for debugging 

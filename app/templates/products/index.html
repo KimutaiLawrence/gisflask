@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Products Management{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Products Management</h1>
+    <a href="{{ url_for('products.create') }}" class="btn btn-primary">
+      <i class="fas fa-plus"></i> Add New Product
+    </a>
+  </div>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <div class="card">
+    <div class="card-header bg-dark text-white">
+      <h5 class="mb-0">Products List</h5>
+    </div>
+    <div class="card-body">
+      <!-- This is a placeholder. Uncomment and modify the code below to implement product listing functionality -->
+      
+      <!-- 
+      {% if products %}
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>SKU</th>
+                <th>Price</th>
+                <th>Created Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for product in products %}
+                <tr>
+                  <td>{{ product.id }}</td>
+                  <td>{{ product.name }}</td>
+                  <td>{{ product.sku }}</td>
+                  <td>${{ "%.2f"|format(product.price) }}</td>
+                  <td>{{ product.created_at.strftime('%Y-%m-%d') }}</td>
+                  <td>
+                    <div class="btn-group" role="group">
+                      <a href="{{ url_for('products.view', product_id=product.id) }}" class="btn btn-sm btn-info">
+                        <i class="fas fa-eye"></i>
+                      </a>
+                      <a href="{{ url_for('products.edit', product_id=product.id) }}" class="btn btn-sm btn-warning">
+                        <i class="fas fa-edit"></i>
+                      </a>
+                      <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal-{{ product.id }}">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                    
+                    <!-- Delete Confirmation Modal -->
+                    <div class="modal fade" id="deleteModal-{{ product.id }}" tabindex="-1" aria-labelledby="deleteModalLabel-{{ product.id }}" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="deleteModalLabel-{{ product.id }}">Confirm Delete</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            Are you sure you want to delete product <strong>{{ product.name }}</strong>?
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <form action="{{ url_for('products.delete', product_id=product.id) }}" method="post">
+                              <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <p class="text-center">No products found.</p>
+      {% endif %}
+      -->
+      
+      <!-- Placeholder content -->
+      <div class="text-center py-5">
+        <h4>Product Management Module</h4>
+        <p class="text-muted">This is a placeholder for the Products List view.</p>
+        <p>To implement this feature:</p>
+        <ol class="text-start mx-auto" style="max-width: 500px;">
+          <li>Create a Product model in <code>app/models.py</code></li>
+          <li>Uncomment and customize the table code in this template</li>
+          <li>Implement the routes in <code>app/products/routes.py</code></li>
+        </ol>
+        <div class="mt-4">
+          <a href="{{ url_for('products.create') }}" class="btn btn-primary me-2">Add Product Example</a>
+          <a href="{{ url_for('products.view', product_id='example-id') }}" class="btn btn-info me-2">View Product Example</a>
+          <a href="{{ url_for('products.edit', product_id='example-id') }}" class="btn btn-warning">Edit Product Example</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
