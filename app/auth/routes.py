@@ -8,6 +8,7 @@ from app.extensions import bcrypt, db
 from app.models import User, Role
 from app.auth.schemas import UserSchema, LoginSchema
 from marshmallow import ValidationError
+import uuid
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
@@ -226,11 +227,15 @@ def protected():
         description: Missing or invalid token
     """
     current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
-    
-    if not user:
-        return jsonify({'message': 'User not found'}), 404
+    try:
+        user_id = uuid.UUID(current_user_id)
+        user = User.query.get(user_id)
         
-    return jsonify({'logged_in_as': user.username}), 200
+        if not user:
+            return jsonify({'message': 'User not found'}), 404
+            
+        return jsonify({'logged_in_as': user.username}), 200
+    except ValueError:
+        return jsonify({'message': 'Invalid user ID format'}), 400
 
 

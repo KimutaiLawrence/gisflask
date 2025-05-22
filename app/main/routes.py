@@ -4,6 +4,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.main import main_bp
 from app.extensions import db
 from app.models import User, MapPreference
+import uuid
 
 @main_bp.route('/')
 def index():
@@ -117,54 +118,58 @@ def map_preferences():
         description: Missing or invalid token
     """
     current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
-    
-    if not user:
-        return jsonify({'message': 'User not found'}), 404
-    
-    # Check if user has map preferences
-    map_pref = MapPreference.query.filter_by(user_id=current_user_id).first()
-    
-    if request.method == 'GET':
-        if not map_pref:
+    try:
+        user_id = uuid.UUID(current_user_id)
+        user = User.query.get(user_id)
+        
+        if not user:
+            return jsonify({'message': 'User not found'}), 404
+        
+        # Check if user has map preferences
+        map_pref = MapPreference.query.filter_by(user_id=user_id).first()
+        
+        if request.method == 'GET':
+            if not map_pref:
+                return jsonify({
+                    'center_lat': 0.0,
+                    'center_lng': 0.0,
+                    'zoom_level': 2
+                }), 200
+            
             return jsonify({
-                'center_lat': 0.0,
-                'center_lng': 0.0,
-                'zoom_level': 2
+                'center_lat': map_pref.center_lat,
+                'center_lng': map_pref.center_lng,
+                'zoom_level': map_pref.zoom_level
             }), 200
         
-        return jsonify({
-            'center_lat': map_pref.center_lat,
-            'center_lng': map_pref.center_lng,
-            'zoom_level': map_pref.zoom_level
-        }), 200
-    
-    elif request.method == 'POST':
-        data = request.get_json()
-        
-        if not map_pref:
-            # Create a new map preference for the user
-            map_pref = MapPreference()
-            map_pref.user_id = current_user_id
-            map_pref.map_type = 'folium'
-            map_pref.center_lat = 0.0
-            map_pref.center_lng = 0.0
-            map_pref.zoom_level = 2
-            db.session.add(map_pref)
-        
-        # Update preferences
-        if 'center_lat' in data:
-            map_pref.center_lat = data['center_lat']
-        if 'center_lng' in data:
-            map_pref.center_lng = data['center_lng']
-        if 'zoom_level' in data:
-            map_pref.zoom_level = data['zoom_level']
-        
-        db.session.commit()
-        
-        return jsonify({
-            'message': 'Map preferences updated',
-            'center_lat': map_pref.center_lat,
-            'center_lng': map_pref.center_lng,
-            'zoom_level': map_pref.zoom_level
-        }), 200
+        elif request.method == 'POST':
+            data = request.get_json()
+            
+            if not map_pref:
+                # Create a new map preference for the user
+                map_pref = MapPreference()
+                map_pref.user_id = user_id
+                map_pref.map_type = 'folium'
+                map_pref.center_lat = 0.0
+                map_pref.center_lng = 0.0
+                map_pref.zoom_level = 2
+                db.session.add(map_pref)
+            
+            # Update preferences
+            if 'center_lat' in data:
+                map_pref.center_lat = data['center_lat']
+            if 'center_lng' in data:
+                map_pref.center_lng = data['center_lng']
+            if 'zoom_level' in data:
+                map_pref.zoom_level = data['zoom_level']
+            
+            db.session.commit()
+            
+            return jsonify({
+                'message': 'Map preferences updated',
+                'center_lat': map_pref.center_lat,
+                'center_lng': map_pref.center_lng,
+                'zoom_level': map_pref.zoom_level
+            }), 200
+    except ValueError:
+        return jsonify({'message': 'Invalid user ID format'}), 400
