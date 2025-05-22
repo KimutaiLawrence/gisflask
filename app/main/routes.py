@@ -133,13 +133,15 @@ def map_preferences():
                 return jsonify({
                     'center_lat': 0.0,
                     'center_lng': 0.0,
-                    'zoom_level': 2
+                    'zoom_level': 2,
+                    'map_type': 'folium'
                 }), 200
             
             return jsonify({
                 'center_lat': map_pref.center_lat,
                 'center_lng': map_pref.center_lng,
-                'zoom_level': map_pref.zoom_level
+                'zoom_level': map_pref.zoom_level,
+                'map_type': getattr(map_pref, 'map_type', 'folium')
             }), 200
         
         elif request.method == 'POST':
