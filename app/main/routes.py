@@ -158,6 +158,8 @@ def map_preferences():
                 db.session.add(map_pref)
             
             # Update preferences
+            if 'map_type' in data:
+                map_pref.map_type = data['map_type']
             if 'center_lat' in data:
                 map_pref.center_lat = data['center_lat']
             if 'center_lng' in data:
@@ -171,7 +173,8 @@ def map_preferences():
                 'message': 'Map preferences updated',
                 'center_lat': map_pref.center_lat,
                 'center_lng': map_pref.center_lng,
-                'zoom_level': map_pref.zoom_level
+                'zoom_level': map_pref.zoom_level,
+                'map_type': map_pref.map_type
             }), 200
     except ValueError:
         return jsonify({'message': 'Invalid user ID format'}), 400
